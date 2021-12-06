@@ -3,7 +3,7 @@ import axios from 'axios'
 import iconv from 'iconv-lite'
 import { JSDOM } from 'jsdom'
 
-type Data = string[]
+type Data = string
 
 const decodeMap: Record<string, string> = {}
 const win1251 = new TextDecoder('windows-1251')
@@ -46,11 +46,11 @@ export default async function handler(
 
   // console.log(iconv.encode(word, 'win1251').toString())
 
-  console.log(
-    iconv
-      .encode(iconv.decode(Buffer.from(data, 'binary'), 'win1251'), 'utf8')
-      .toString(),
-  )
+  // console.log(
+  //   iconv
+  //     .encode(iconv.decode(Buffer.from(data, 'binary'), 'win1251'), 'utf8')
+  //     .toString(),
+  // )
 
   const { document } = new JSDOM(
     iconv
@@ -58,17 +58,12 @@ export default async function handler(
       .toString(),
   ).window
 
-  // console.log(
-  //   Array.from(document.querySelectorAll('img[alt="ребусы"]')).map(
-  //     (elem) => `/api/${elem.getAttribute('src')}`,
-  //   ),
-  // )
+  const response =
+    document
+      .querySelector('div[style="height:300px;width:800px;overflow:auto;"]')
+      ?.innerHTML.replaceAll(`pictures/`, `/api/pictures/`) || ``
 
-  res
-    .status(200)
-    .json(
-      Array.from(document.querySelectorAll('img[alt="ребусы"]')).map(
-        (elem) => `/api/${elem.getAttribute('src')}`,
-      ),
-    )
+  console.log(response)
+
+  res.status(200).json(response)
 }

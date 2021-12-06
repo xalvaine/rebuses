@@ -12,7 +12,7 @@ const Home: NextPage = () => {
     isValidating: isWordValidating,
   } = useSWR<string>('/word')
 
-  const { data: images, isValidating: isImagesValidating } = useSWR<string[]>(
+  const { data: images, isValidating: isImagesValidating } = useSWR<string>(
     word ? ['/rebus', { params: { word } } as AxiosRequestConfig] : null,
   )
 
@@ -30,12 +30,10 @@ const Home: NextPage = () => {
         </Typography.Title>
       </div>
       <div className={styles.imagesWrapper}>
-        <div className={styles.images}>
-          {images?.map((image) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={image} alt='' src={image} />
-          ))}
-        </div>
+        <div
+          className={styles.images}
+          dangerouslySetInnerHTML={{ __html: images || `` }}
+        />
       </div>
       <div className={styles.wrapper}>
         <Button
